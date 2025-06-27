@@ -9,34 +9,22 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import streamlit as st
+from google.oauth2 import service_account
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-def authenticate_google():
-    creds = None
+from google.oauth2 import service_account
 
-    # Use Streamlit secrets to read credentials (secure and cloud-friendly)
+def authenticate_google():
     creds_data = json.loads(st.secrets["GOOGLE_CREDENTIALS"])
 
-    # Token path — works locally; safe fallback if not present
-    token_path = "credentials/token.json"
-    if os.path.exists(token_path):
-        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
+    credentials = service_account.Credentials.from_service_account_info(
+        creds_data,
+        scopes=SCOPES
+    )
 
-    # Refresh or authenticate
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_config(creds_data, SCOPES)
-            creds = flow.run_local_server(port=0)
+    return build("calendar", "v3", credentials=credentials)
 
-        # Save token (optional: only locally useful)
-        os.makedirs("credentials", exist_ok=True)
-        with open(token_path, "w") as token:
-            token.write(creds.to_json())
-
-    return build("calendar", "v3", credentials=creds)
 
 def check_availability(service, start_time, end_time):
     events_result = service.events().list(
