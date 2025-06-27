@@ -7,3 +7,4 @@ langchain
 langgraph
 streamlit
 python-dotenv
+dateparser
