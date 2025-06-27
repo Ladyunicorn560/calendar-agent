@@ -1,0 +1,13 @@
+# Virtual environment
+venv/
+
+# Secret credentials
+.env
+credentials/*.json
+
+# VSCode settings
+.vscode/
+
+# Byte-compiled
+__pycache__/
+*.pyc
