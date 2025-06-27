@@ -8,3 +8,4 @@ langgraph
 streamlit
 python-dotenv
 dateparser
+langchain-groq
